@@ -22,11 +22,10 @@ async function createCompaniesArray() {
   });
   noDuplicateCompanies.sort((a,b)=>a-b);
   noDuplicateCompanies.forEach((company) => {
-    const companyData = {};
-    const companyNumber = 'title';
-    const contentKey = 'workers';
-    companyData[companyNumber] = company;
-    companyData[contentKey] = [];
+    const companyData = {
+      title: company,
+      workers: [],
+    };
     detailedCompaniesArray.push(companyData);
   });
   for (let i = 0; i < arrayOfUsers.length; i++) {
@@ -37,7 +36,7 @@ async function createCompaniesArray() {
     }
   }
   for (let i = 0; i < detailedCompaniesArray.length; i++) {
-    addCompanyName(detailedCompaniesArray[i].title)
+    addCompanyName(detailedCompaniesArray[i].title);
     detailedCompaniesArray[i].workers.forEach((worker) => {
       addUserCard(detailedCompaniesArray[i].title ,worker.name, worker.email, worker.company);
     });
