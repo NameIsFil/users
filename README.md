@@ -3,6 +3,7 @@
 
 The task is to display a list of companies and their users
 Data source is a db.json file that you need to serve using [json-server](https://www.npmjs.com/package/json-server).
+json-server --watch db.json
 ---
 
 #### Steps to finish the task:
