@@ -36,22 +36,39 @@ async function createCompaniesArray() {
       }
     }
   }
-  console.log(detailedCompaniesArray);
+  for (let i = 0; i < detailedCompaniesArray.length; i++) {
+    addCompanyName(detailedCompaniesArray[i].title)
+    detailedCompaniesArray[i].workers.forEach((worker) => {
+      addUserCard(detailedCompaniesArray[i].title ,worker.name, worker.email, worker.company);
+    });
+  }
 }
 
 const userTable = document.querySelector('#user-table');
 
-const addUserCard = (name, email, userId) => {
+const addCompanyName = (company) => {
+  const companyCard = document.createElement('div');
+  let companyName = document.createElement('h1');
+
+  companyCard.classList.add('company-card');
+
+  companyName.innerText = company;
+  companyCard.append(companyName);
+  userTable.append(companyCard);
+};
+
+const addUserCard = (company, name, email, userId) => {
   const userCard = document.createElement('div');
-  let userName = document.createElement('h1');
-  let userEmail = document.createElement('h2');
+  let userCompany = document.createElement('h1');
+  let userName = document.createElement('h2');
+  let userEmail = document.createElement('h3');
 
   userCard.classList.add('user-card');
   userCard.setAttribute('id', userId);
 
   userName.innerText = name;
   userEmail.innerText = email;
-  userCard.append(userName, userEmail);
+  userCard.append(userCompany, userName, userEmail);
   userTable.append(userCard);
 };
 
