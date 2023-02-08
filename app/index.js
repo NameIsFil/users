@@ -1,74 +1,74 @@
-import './styles/styles.scss';
+import "./styles/styles.scss";
 
 window.onload = () => {
-  const heading = document.querySelector('.heading');
-  heading.textContent = 'It\'s working!';
+  const heading = document.querySelector(".heading");
+  heading.textContent = "It's working!";
 };
+
+const userTable = document.querySelector("#company-table");
 
 async function createCompaniesArray() {
-  const postResponse = await fetch('http://localhost:3000/users');
+  const postResponse = await fetch("http://localhost:3000/users");
   const usersData = await postResponse.json();
-  const arrayOfCompanies = [];
+  const companies = {};
   const arrayOfUsers = [];
-  const detailedCompaniesArray = [];
+
   usersData.forEach((user) => {
     const companyUri = user.uris.company;
-    const companyId = Number(companyUri.split('/').pop());
-    arrayOfUsers.push({name:user.name, email:user.email, company: companyId});
-    arrayOfCompanies.push(companyId);
-  });
-  let noDuplicateCompanies = arrayOfCompanies.filter((element, index) => {
-    return arrayOfCompanies.indexOf(element) === index;
-  });
-  noDuplicateCompanies.sort((a,b)=>a-b);
-  noDuplicateCompanies.forEach((company) => {
-    const companyData = {
-      title: company,
-      workers: [],
-    };
-    detailedCompaniesArray.push(companyData);
-  });
-  for (let i = 0; i < arrayOfUsers.length; i++) {
-    for (let j = 0; j < detailedCompaniesArray.length; j++) {
-      if(arrayOfUsers[i].company === detailedCompaniesArray[j].title) {
-        detailedCompaniesArray[j].workers.push(arrayOfUsers[i]);
-      }
-    }
-  }
-  for (let i = 0; i < detailedCompaniesArray.length; i++) {
-    addCompanyName(detailedCompaniesArray[i].title);
-    detailedCompaniesArray[i].workers.forEach((worker) => {
-      addUserCard(detailedCompaniesArray[i].title ,worker.name, worker.email, worker.company);
+    const companyId = Number(companyUri.split("/").pop());
+    arrayOfUsers.push({
+      name: user.name,
+      email: user.email,
+      company: companyId,
     });
+    // arrayOfCompanies.push(companyId);
+    const employees = companies[companyId]?.employees || [];
+    companies[companyId] = {
+      uri: companyUri,
+      employees: [...employees, user],
+    };
+  });
+
+  const arrayOfCompanies = Object.entries(companies);
+  console.log(arrayOfCompanies);
+
+  for (let i=0; i < arrayOfCompanies.length; i++) {
+
+    const companyCard = document.createElement("div");
+    const companyMenu = document.createElement("p");
+    const collapseSegment = document.createElement("div");
+    let companyName = document.createElement("a");
+
+    collapseSegment.classList.add("collapse");
+    collapseSegment.setAttribute('id', "collapseExample");
+
+    companyName.classList.add('btn', 'btn-primary');
+    companyName.setAttribute('data-toggle', "collapse");
+    companyName.setAttribute('href', "#collapseExample");
+    companyName.setAttribute('role', "button");
+    companyName.setAttribute('aria-expanded', "false");
+    companyName.setAttribute('aria-controls', "collapseExample");
+    companyName.innerText = "Company " + arrayOfCompanies[i][0];
+
+
+    companyMenu.append(companyName);
+    companyCard.append(companyMenu, collapseSegment);
+
+    arrayOfCompanies[i][1].employees.forEach((user) => {
+      const employeeCard = document.createElement("div");
+      let userName = document.createElement("h2");
+      let userEmail = document.createElement("h3");
+
+      employeeCard.classList.add('card', 'card-body');
+
+      userName.innerText = user.name;
+      userEmail.innerText = user.email;
+      employeeCard.append(userName, userEmail);
+      collapseSegment.append(employeeCard);
+    });
+
+    userTable.append(companyCard);
   }
 }
-
-const userTable = document.querySelector('#user-table');
-
-const addCompanyName = (company) => {
-  const companyCard = document.createElement('div');
-  let companyName = document.createElement('h1');
-
-  companyCard.classList.add('company-card');
-
-  companyName.innerText = company;
-  companyCard.append(companyName);
-  userTable.append(companyCard);
-};
-
-const addUserCard = (company, name, email, userId) => {
-  const userCard = document.createElement('div');
-  let userCompany = document.createElement('h1');
-  let userName = document.createElement('h2');
-  let userEmail = document.createElement('h3');
-
-  userCard.classList.add('user-card');
-  userCard.setAttribute('id', userId);
-
-  userName.innerText = name;
-  userEmail.innerText = email;
-  userCard.append(userCompany, userName, userEmail);
-  userTable.append(userCard);
-};
 
 createCompaniesArray();

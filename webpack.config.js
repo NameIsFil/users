@@ -1,38 +1,38 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path");
 
 module.exports = {
-  entry: './app/index.js',
+  entry: "./app/index.js",
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: '[name].[chunkhash].bundle.js',
+    path: path.resolve(__dirname, "./dist"),
+    filename: "[name].[chunkhash].bundle.js",
   },
-  mode: 'development',
-  plugins: [new HtmlWebpackPlugin({ template: './app/index.html' })],
+  mode: "development",
+  plugins: [new HtmlWebpackPlugin({ template: "./app/index.html" })],
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.scss$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
+        use: ["style-loader", "css-loader", "sass-loader"],
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
-        type: 'asset/resource',
+        type: "asset/resource",
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
+        type: "asset/resource",
       },
       {
         test: /\.html$/,
         use: [
           {
-            loader: 'html-loader',
-          }
+            loader: "html-loader",
+          },
         ],
       },
     ],
