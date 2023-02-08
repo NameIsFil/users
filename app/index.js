@@ -21,7 +21,6 @@ async function createCompaniesArray() {
       email: user.email,
       company: companyId,
     });
-    // arrayOfCompanies.push(companyId);
     const employees = companies[companyId]?.employees || [];
     companies[companyId] = {
       uri: companyUri,
@@ -30,26 +29,40 @@ async function createCompaniesArray() {
   });
 
   const arrayOfCompanies = Object.entries(companies);
+
+  arrayOfCompanies.sort((a, b) => {
+    if (b[1].employees.length > a[1].employees.length) return 1;
+    if (b[1].employees.length < a[1].employees.length) return -1;
+    return 0;
+  });
+
   console.log(arrayOfCompanies);
 
-  for (let i=0; i < arrayOfCompanies.length; i++) {
-
+  for (let i = 0; i < arrayOfCompanies.length; i++) {
     const companyCard = document.createElement("div");
     const companyMenu = document.createElement("p");
     const collapseSegment = document.createElement("div");
     let companyName = document.createElement("a");
 
     collapseSegment.classList.add("collapse");
-    collapseSegment.setAttribute('id', "collapseExample");
+    collapseSegment.setAttribute(
+      "id",
+      "collapseExample" + arrayOfCompanies[i][0]
+    );
 
-    companyName.classList.add('btn', 'btn-primary');
-    companyName.setAttribute('data-toggle', "collapse");
-    companyName.setAttribute('href', "#collapseExample");
-    companyName.setAttribute('role', "button");
-    companyName.setAttribute('aria-expanded', "false");
-    companyName.setAttribute('aria-controls', "collapseExample");
+    companyName.classList.add("btn", "btn-dark", "btn-lg", "btn-block");
+    companyName.setAttribute("data-toggle", "collapse");
+    companyName.setAttribute(
+      "href",
+      "#collapseExample" + arrayOfCompanies[i][0]
+    );
+    companyName.setAttribute("role", "button");
+    companyName.setAttribute("aria-expanded", "false");
+    companyName.setAttribute(
+      "aria-controls",
+      "collapseExample" + arrayOfCompanies[i][0]
+    );
     companyName.innerText = "Company " + arrayOfCompanies[i][0];
-
 
     companyMenu.append(companyName);
     companyCard.append(companyMenu, collapseSegment);
@@ -59,14 +72,13 @@ async function createCompaniesArray() {
       let userName = document.createElement("h2");
       let userEmail = document.createElement("h3");
 
-      employeeCard.classList.add('card', 'card-body');
+      employeeCard.classList.add("card", "card-body");
 
       userName.innerText = user.name;
       userEmail.innerText = user.email;
       employeeCard.append(userName, userEmail);
       collapseSegment.append(employeeCard);
     });
-
     userTable.append(companyCard);
   }
 }
