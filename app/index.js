@@ -1,78 +1,66 @@
-import "./styles/styles.scss";
+import './styles/styles.scss';
 
-window.onload = () => {
-  const heading = document.querySelector(".heading");
-  heading.textContent = "It's working!";
-};
-
-const userTable = document.querySelector("#company-table");
+const userTable = document.querySelector('#company-table');
 
 async function createCompaniesArray() {
-  const postResponse = await fetch("http://localhost:3000/users");
+  const postResponse = await fetch('http://localhost:3000/users');
   const usersData = await postResponse.json();
   const companies = {};
-  const arrayOfUsers = [];
 
   usersData.forEach((user) => {
     const companyUri = user.uris.company;
-    const companyId = Number(companyUri.split("/").pop());
-    arrayOfUsers.push({
-      name: user.name,
-      email: user.email,
-      company: companyId,
-    });
+    const companyId = Number(companyUri.split('/').pop());
     const employees = companies[companyId]?.employees || [];
     companies[companyId] = {
+      id: companyId,
       uri: companyUri,
       employees: [...employees, user],
     };
   });
 
-  const arrayOfCompanies = Object.entries(companies);
+  const arrayOfCompanies = Object.values(companies);
 
-  arrayOfCompanies.sort((a, b) => {
-    if (b[1].employees.length > a[1].employees.length) return 1;
-    if (b[1].employees.length < a[1].employees.length) return -1;
-    return 0;
+  arrayOfCompanies.sort((firstCompany, secondCompany) => {
+    return firstCompany.employees.length - secondCompany.employees.length;
   });
 
-  console.log(arrayOfCompanies);
-
   for (let i = 0; i < arrayOfCompanies.length; i++) {
-    const companyCard = document.createElement("div");
-    const companyMenu = document.createElement("p");
-    const collapseSegment = document.createElement("div");
-    let companyName = document.createElement("a");
+    const company = arrayOfCompanies[i];
 
-    collapseSegment.classList.add("collapse");
+    const companyCard = document.createElement('div');
+    const companyMenu = document.createElement('p');
+    const collapseSegment = document.createElement('div');
+    let companyName = document.createElement('a');
+
+    collapseSegment.classList.add('collapse');
     collapseSegment.setAttribute(
-      "id",
-      "collapseExample" + arrayOfCompanies[i][0]
+      'id',
+      'collapseExample' + company.id
     );
 
-    companyName.classList.add("btn", "btn-dark", "btn-lg", "btn-block");
-    companyName.setAttribute("data-toggle", "collapse");
+    companyName.classList.add('btn', 'btn-dark', 'btn-lg', 'btn-block');
+    companyName.setAttribute('data-toggle', 'collapse');
     companyName.setAttribute(
-      "href",
-      "#collapseExample" + arrayOfCompanies[i][0]
+      'href',
+      '#collapseExample' + company.id
     );
-    companyName.setAttribute("role", "button");
-    companyName.setAttribute("aria-expanded", "false");
+    companyName.setAttribute('role', 'button');
+    companyName.setAttribute('aria-expanded', 'false');
     companyName.setAttribute(
-      "aria-controls",
-      "collapseExample" + arrayOfCompanies[i][0]
+      'aria-controls',
+      'collapseExample' + company.id
     );
-    companyName.innerText = "Company " + arrayOfCompanies[i][0];
+    companyName.innerText = 'Company ' + company.id;
 
     companyMenu.append(companyName);
     companyCard.append(companyMenu, collapseSegment);
 
-    arrayOfCompanies[i][1].employees.forEach((user) => {
-      const employeeCard = document.createElement("div");
-      let userName = document.createElement("h2");
-      let userEmail = document.createElement("h3");
+    company.employees.forEach((user) => {
+      const employeeCard = document.createElement('div');
+      let userName = document.createElement('h2');
+      let userEmail = document.createElement('h3');
 
-      employeeCard.classList.add("card", "card-body");
+      employeeCard.classList.add('card', 'card-body');
 
       userName.innerText = user.name;
       userEmail.innerText = user.email;
