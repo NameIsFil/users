@@ -3,22 +3,30 @@ import './styles/styles.scss';
 const userTable = document.querySelector('#company-table');
 
 async function createCompaniesArray() {
-  const postResponse = await fetch('http://localhost:3000/users');
-  const usersData = await postResponse.json();
+  const usersResponse = await fetch('http://localhost:3000/users');
+  const companiesResponse = await fetch('http://localhost:3000/companies');
+  const usersData = await usersResponse.json();
+  const companiesData = await companiesResponse.json();
   const companies = {};
+
+  companiesData.forEach((company) => {
+    const companyId = Number(company.uri.split('/').pop());
+    companies[companyId] = {
+      name: company.name,
+      id: companyId,
+      uri: company.uri,
+      employees: []
+    };
+  });
 
   usersData.forEach((user) => {
     const companyUri = user.uris.company;
     const companyId = Number(companyUri.split('/').pop());
-    const employees = companies[companyId]?.employees || [];
-    companies[companyId] = {
-      id: companyId,
-      uri: companyUri,
-      employees: [...employees, user],
-    };
+    companies[companyId].employees.push(user);
   });
 
   const arrayOfCompanies = Object.values(companies);
+  console.log(arrayOfCompanies);
 
   arrayOfCompanies.sort((firstCompany, secondCompany) => {
     return firstCompany.employees.length - secondCompany.employees.length;
@@ -50,7 +58,7 @@ async function createCompaniesArray() {
       'aria-controls',
       'collapseExample' + company.id
     );
-    companyName.innerText = 'Company ' + company.id;
+    companyName.innerText = company.name;
 
     companyMenu.append(companyName);
     companyCard.append(companyMenu, collapseSegment);
