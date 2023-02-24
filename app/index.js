@@ -3,10 +3,12 @@ import './styles/styles.scss';
 const userTable = document.querySelector('#company-table');
 
 async function createCompaniesArray() {
-  const usersResponse = await fetch('http://localhost:3000/users');
-  const companiesResponse = await fetch('http://localhost:3000/companies');
-  const usersData = await usersResponse.json();
-  const companiesData = await companiesResponse.json();
+  const [usersResponse, companiesResponse] = await Promise.all([
+    fetch('http://localhost:3000/users'),
+    fetch('http://localhost:3000/companies')
+  ]);
+  const [usersData, companiesData] = await Promise.all([usersResponse.json(), companiesResponse.json()]);
+
   const companies = {};
 
   companiesData.forEach((company) => {
@@ -26,7 +28,6 @@ async function createCompaniesArray() {
   });
 
   const arrayOfCompanies = Object.values(companies);
-  console.log(arrayOfCompanies);
 
   arrayOfCompanies.sort((firstCompany, secondCompany) => {
     return firstCompany.employees.length - secondCompany.employees.length;
