@@ -35,7 +35,6 @@ async function createCompaniesArray() {
 
   for (let i = 0; i < arrayOfCompanies.length; i++) {
     const company = arrayOfCompanies[i];
-
     const companyCard = document.createElement('div');
     const companyMenu = document.createElement('p');
     const collapseSegment = document.createElement('div');
